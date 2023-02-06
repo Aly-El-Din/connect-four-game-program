@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1675710469 source:c:\users\cyber\documents\last connect\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	<time.h>
+	<ctype.h>
+	<malloc.h>
+	<windows.h>
+	<conio.h>
+

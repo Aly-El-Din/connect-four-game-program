@@ -26,7 +26,7 @@ typedef struct
     int score;
 } information;
 player plA, plB;
-information top_players[10000];
+information top_players[10];
 ///creating a stack with its functions
 ///stack which involves columns indexes in which undo has been done
 ///which will help us undo and redo 2 stacks the first stores all moves played
@@ -159,10 +159,9 @@ void startNewGame() {
     }
     main();
 }
+static int number_of_saves = 0;
 void endOfGame(int score1, int score2)
-{
-///function converts the string name of the winner player to lowercase characters
-        information player;
+{        information player;
         if (score1 > score2)
         {
             lightBlue();
@@ -185,44 +184,23 @@ void endOfGame(int score1, int score2)
         lightBlue();
         printf("saving your name to the top high scores...");
         reset();
-        sleep(3);
+        sleep(2);
         FILE* file;
-        int number_of_saves = 0, identically = 0;
-        if ((file = fopen("Topscores.binary", "rb")) == NULL)
-        {
-            red();
-            printf("File doesn");
-            sleep(3);
-            reset();
-            mainMenu();
-        }
-        while (fread(&top_players[number_of_saves], sizeof(information), 1, file))
-        {
-            if (!(strcmp(player.name, top_players[number_of_saves].name)))
-            {
-                if (player.score >= top_players[number_of_saves].score)
-                    top_players[number_of_saves].score = player.score;
-                identically = 1;
-            }
-            number_of_saves++;
-
-        }
-        if (identically == 0)
-        {
-            strcpy(top_players[number_of_saves].name, player.name);
-            top_players[number_of_saves].score = player.score;
-            number_of_saves++;
-        }
-        fclose(file);
+        file=fopen("Topscores.binary", "wb");
+        int identically = 0;
+        strcpy(top_players[number_of_saves].name, player.name);
+        top_players[number_of_saves].score = player.score;
         mergeSort(top_players, 0, number_of_saves - 1);
-        FILE* file2;
-        file2 = fopen("Topscores.binary", "wb");
-        for (int i = 0; i < number_of_saves; ++i)
-            fwrite(&top_players[i], sizeof(information), 1, file2);
-        fclose(file2);
+        file = fopen("Topscores.binary", "wb");
+        fwrite(&top_players[number_of_saves].name, sizeof(top_players[number_of_saves].name), 1, file);
+        fwrite(&top_players[number_of_saves].score, sizeof(top_players[number_of_saves].score), 1, file);
+        fclose(file);
+        number_of_saves++;
         startAgain=1;
         startNewGame();
+        mainMenu();
 }
+///function converts the string name of the winner player to lowercase characters
 void convertToLower(char name[])
 {
 ///merge sorting algorithm
@@ -285,24 +263,25 @@ int Index = 0;
 ///function represents the top 10 players
 void Top_players(int number_of_top)
 {
-
-    FILE* file3;
-    file3 = fopen("Topscores.binary", "r");
-    while (fread(&top_players[Index], sizeof(information), 1, file3))
-        Index++;
+    FILE* file;
+    file = fopen("Topscores.binary", "r");
+    if(file==NULL){
+        lightBlue();
+        printf("File is empty, play first to fill it!");
+        reset();
+        sleep(3);
+        mainMenu();
+        return;
+    }
     blue();
-    printf(" %-5s %-30s\n", "Score", "Name");
+    printf("Score\tName\n");
+    for(int i=0;i<number_of_saves;i++){
+        fread(&top_players[i].name,sizeof(top_players[i].name),1,file);
+        fread(&top_players[i].score, sizeof(top_players[i].score), 1, file);
+        printf("%d\t%s\n",top_players[i].score,top_players[i].name);
+    }
     reset();
-    if (Index - 1 > number_of_top)
-    {
-        for (int i = Index - 1; i > Index - 1 - number_of_top; --i)
-            printf(" %-5d %-30s\n", top_players[i].score, top_players[i].name);
-    }
-    else {
-        for (int i = Index - 1; i >= 0; --i)
-            printf(" %-5d %-30s\n", top_players[i].score, top_players[i].name);
-    }
-    fclose(file3);
+    fclose(file);
 }
 bool FlagIn = false;
 int ErrorFlag = 0;
@@ -484,7 +463,6 @@ void instructions(){
     FILE    *textfile;
     char    *text;
     long    numbytes;
-
     textfile = fopen("readme.txt", "r");
     if(textfile == NULL)
         return 1;
