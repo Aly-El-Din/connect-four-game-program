@@ -1,6 +1,6 @@
 Instructions:
 1-You can play vs another player or vs computer
-2-If you entered random choices, it will be required to enter on of the correct choices once again.
+2-If you entered random choices, it will be required to enter one of the correct choices once again.
 3-Once you start the game, you can return to the mainmenu after entering "yes" (all lowercase letters).
 4-Size of you board is 9x7 if it's read correctly from the xml file, else the default size would be executed which is 6x7.
 5-If you want to resize your board,open "mytesterfile" using one of the existed readers on you computer (notepad,word,etc..)
